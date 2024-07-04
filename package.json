@@ -1,0 +1,19 @@
+{
+  "name": "rest-express",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "5.16.1",
+    "express": "4.19.2",
+    "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "prisma": "5.16.1"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}
