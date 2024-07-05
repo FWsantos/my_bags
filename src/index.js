@@ -1,31 +1,60 @@
 const express = require('express')
-const helmet = require('helmet')
 const { PrismaClient } = require('@prisma/client')
+const fs = require('fs')
+const path = require('path')
+// const helmet = require('helmet')
+// const { getImage } = require('./images');
+
 
 const prisma = new PrismaClient()
 const app = express()
 
 app.use(express.json())
-app.use(helmet())
+// app.use(helmet())
 
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "https://www.google.com.br", "https://www.bing.com.br"],
-    },
-  })
-);
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       scriptSrc: ["'self'"],
+//       imgSrc: ["'self'", "../images"],
+//     },
+//   })
+// );
 
 app.get('/', (req, res) => {
   res.send('Bem-vindo à API!');
 });
 
 app.get('/produtos', async (req, res) => {
-  const products = await prisma.product.findMany()
-  res.json(products)
+    try {
+        const produtos = await prisma.product.findMany();
+
+        // Ler as imagens do disco
+        const produtosComImagens = await Promise.all(produtos.map(async produto => {
+            console.log(produto);
+            const imagePath = path.resolve(__dirname, produto.image);
+            const imageData = await fs.promises.readFile(imagePath);
+            return { ...produto, image: imageData.toString('base64') };
+        }));
+
+        res.json(produtosComImagens);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erro ao obter produtos e imagens.');
+    }
 });
+
+// app.get('/produtos', async (req, res) => {
+//   const products = await prisma.product.findMany()
+//   for (const product of products) {
+//     const { id, image } = product;
+//     // console.log(`Product ${id} image: ${image}`);
+//     // console.log(`Product ${id} image: ${getImage(image)}`);
+//     product.image = getImage(image);
+//   }
+//   res.json(products)
+// });
 // app.post(`/signup`, async (req, res) => {
 //   const { name, email, posts } = req.body
 
