@@ -7,13 +7,13 @@ const productData = [
       name: 'Estojo',
       description: 'Estojo escolar',
       price: 6.00,
-      image: 'https://www.google.com.br',
+      image: '../images/estojo.jpg',
     },
     {
       name: 'Mochila',
       description: 'Mochila escolar',
       price: 50.00,
-      image: 'https://www.bing.com.br',
+      image: '../images/mochila.jpg',
   },
 ]
 
